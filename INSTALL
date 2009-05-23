@@ -1,0 +1,99 @@
+
+		-----------------------------------------
+			nls_string for PostgreSQL
+		-----------------------------------------
+
+This is the INSTALL file for the nls_string and nls_value collating
+functions for the PostgreSQL database server.
+
+------------------------
+Installation using make:
+
+Untar the distribution, cd to the distribution directory and run
+
+  # make
+
+If everything goes well, the C source is compiled and copied to the
+server directory. You might need package like postgresql-devel if
+you install PostgreSQL using some kind of package manager as the
+server instalation itself might not have everything you need to do
+the compilation.
+
+Then, do
+
+  # psql database_name < nls_string.sql
+
+and the functions will be created in the selected database. You can
+start collating and be happy.
+
+---------------------
+Installation by hand:
+
+To install the functions by hand, you have to compile the nls_string.c
+to a shared library first. Please, check your current PostgreSQL
+documentation, or
+
+  http://www.postgresql.org/docs/8.0/static/xfunc-c.html#DFUNC
+
+for details about your platform. The command
+
+  $ gcc -I/usr/include/pgsql/server -fPIC -shared -o nls_string.so nls_string.c
+
+did the trick for me on a Linux machine. Please adjust the -I path
+according to the path where you have PostgreSQL source code tree,
+or where your PostgreSQL include files are stored (provided you do not
+have the full PostgreSQL source). If you do not have the full sources
+and installed PostgreSQL using some package manager (rpm, deb),
+you might need package like postgresql-devel. On some systems,
+
+  $ pg_config --includedir-server
+
+might help you to determine location of the include fules of installed
+PostgreSQL.
+
+After you have compiled the shared library, copy the resulting
+nls_string.so to a location close and dear to your heart.
+
+Now, in an SQL client, you have to tell the database about the library
+and about the functions. Run command
+
+  create function nls_string(text, text) returns text as
+	'/path/to/the/library/nls_string' language C ;
+  create function nls_value(text, text) returns bytea as
+	'/path/to/the/library/nls_string' language C ;
+
+Adjust the path to the library to the actual location. Or use relative
+path or path starting with string $libdir, if you've placed the shared
+library to a well known location. Check your current PostgreSQL
+documentation, or
+
+  http://www.postgresql.org/docs/8.0/static/xfunc-c.html#XFUNC-C-DYNLOAD
+
+for details.
+
+After you have created the nls_string and nls_value functions, try it
+using some selects with order by clauses. Enjoy and be happy that you
+can sort your data in PostgreSQL using any locale you want, without
+much hassle. 
+
+----------
+Available:
+
+  http://www.fi.muni.cz/~adelton/l10n/
+
+-------
+Author:
+
+Copyright: (c) 2004--2005 Jan Pazdziora, adelton@fi.muni.cz. All rights
+reserved. Permission to use, distribute, modify, an copy this
+software and this documentation for any purpose is hereby granted.
+
+-------------
+Contributors:
+
+	Karel Zak <zakkr@zff.jcu.cz> ftp://ftp2.zf.jcu.cz/users/zakkr/pg/
+		did the error checking
+
+	Fabien
+		created the Makefile
+

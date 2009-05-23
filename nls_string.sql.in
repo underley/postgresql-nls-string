@@ -1,0 +1,8 @@
+create or replace function nls_string(text, text)
+returns text
+as 'MODULE_PATHNAME'
+language C;
+create or replace function nls_value(text, text)
+returns text
+as 'MODULE_PATHNAME'
+language C;

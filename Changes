@@ -1,0 +1,44 @@
+
+		-----------------------------------------
+			nls_string for PostgreSQL
+		-----------------------------------------
+
+This is the Changes file for the nls_string collating function
+for the PostgreSQL database server.
+
+8.3 Sat May 23 18:43:04 CEST 2009
+
+        Port to postgresql-8.3 by Daniel Podlejski
+
+8.02 Wed Apr 20 13:11:21 CEST 2005
+
+	Included the Makefile by Fabien.
+	Added nls_value.
+	Rewritten the logic.
+	Updated the README and INSTALL.
+
+8.01 Sun Apr 17 18:45:53 CEST 2005 (Jan Pazdziora <adelton@fi.muni.cz>)
+
+	Source code updated to use PG_TRY/CATCH/END_TRY to match 8.0's
+	error handling style.
+
+0.53 Fri Feb 27 13:12:53 CET 2004 (Jan Pazdziora <adelton@fi.muni.cz>)
+
+	No setlocale is performed when the standard locale is used.
+	The multiplication factor is cached across invocations.
+	Removed memsets.
+	Fixed error by one on txt_tmp allocation.
+
+0.52 Fri Feb 27 10:21:50 CET 2004 (Karel Zak <zakkr@zf.jcu.cz>)
+
+	Add standard PostgreSQL way for elog() catching by longjump()
+
+0.51 Thu Feb 26 10:21:50 CET 2004 (Karel Zak <zakkr@zf.jcu.cz>)
+
+	Fix setlocale() usage
+	Fix "text" PostgreSQL datetype usage
+	
+0.50 Wed Feb 25 23:52:38 CET 2004
+
+	The initial release.
+

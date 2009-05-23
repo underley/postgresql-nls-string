@@ -1,0 +1,137 @@
+
+		-----------------------------------------
+			nls_string for PostgreSQL
+		-----------------------------------------
+
+This is the README file for the nls_string and nls_value collating
+functions for the PostgreSQL database server.
+
+------------------
+Why this function:
+
+PostgreSQL, at least until version 8.0, has rather weak support for
+various collating sequences (the result of sorting and comparing strings).
+
+What you get when you do
+
+  select ... order by column
+
+is closely tied to indexes used throughout the database cluster and is
+specified by locale settings at the initdb time. Yet, people have asked
+for ways of specifying the collating rules at runtime, even if the
+sorting will not use indexes and may be slower. We just want the database
+server to take the records and sort them by any order we specify.
+
+It is a reasonable request to want the application to collate using
+English rules for one user, to run with German rules for another one
+and to provide yet another one with rules of language you did not even
+know it existed, without having to dump, initdb, restore between selects.
+Now that UTF-8 is the overall character set and supported by PostgreSQL,
+this localization request becomes even more important.
+
+-------------
+How it works:
+
+In this distribution you will find file nls_string.c. It contains the
+definition of functions nls_string(text, text) and nls_value(text, text).
+They take a string parameter and a locale name and return string
+describing the ordering, or the bytea value of that string for
+nls_value respectively.
+
+So you can run
+
+  select * from table order by nls_string(name, 'en_US.UTF-8')
+
+or
+
+  select * from table order by nls_value(name, 'cs_CZ.UTF-8')
+
+or
+
+  select * from table order by nls_string(name, 'C')
+
+and get what you expect -- the result is sorted the same way as it
+would be with LC_COLLATE=locate sort on the command line.
+
+Internally, the function sets the locale for the LC_COLLATE category,
+runs strxfrm on the first parameter and returns the result. The nls_value
+returns bytea, the nls_string encodes the result as octal values, so it
+is even printable.
+
+Thus, for nls_string, it depends on your PostgreSQL collate setting
+(that which you did upon initdb, you can check it with show lc_collate)
+to sort numbers in strings the natural way. I believe this is reasonable
+assumption. For extra protection, use nls_value, as bytea types are
+always compared using their byte values.
+
+Of course, you can also use these function in other situations,
+for example when you need to compare two strings localewise
+
+  select * from table
+  where nls_value(column, 'fr_FR') > nls_value('string', 'fr_FR')
+
+Make sure to use locales matching the character set of the database.
+If you have database in UNICODE, you probably want something like
+en_US.UTF-8 or cs_CZ.UTF-8. If you have database in latin1 or latin2,
+use en_US or cs_CZ.
+
+The locales on your server are used, so make sure those are correct.
+Client settings do not matter.
+
+-------------
+Installation:
+
+Please check the INSTALL file.
+
+---------
+Versions:
+
+This version of nls_string targets PostgreSQL server in version 8.0+.
+To use nls_string on version 7.4, download nls_string 0.53.
+
+-------------
+Bugs and ToDo:
+
+None known at the moment.
+
+---------------------
+Support, bug reports:
+
+This piece of software is provided as-is, in the hope that you will
+find it useful. However, no warranty is provided.
+
+I appreciate any bug reports, enhancement suggestions and patches.
+Please, _please_, use a meaningful Subject line and describe the
+situation in detail. Also make sure you've read and understood this
+README and the PostgreSQL documentation concerning C-language
+functions. I will not be helpful with installation problems if you did
+not read the documentation.
+
+--------------------
+If it works for you:
+
+If the function works for you, I'd appreciate a message from you.
+Just curious for what tasks people use the software. Book gift
+certificates and similar are also welcome. :-)
+
+----------
+Available:
+
+  http://www.fi.muni.cz/~adelton/l10n/
+
+-------
+Author:
+
+Copyright: (c) 2004--2005 Jan Pazdziora, adelton@fi.muni.cz. All
+rights reserved. Permission to use, distribute, modify, an copy this
+software and this documentation for any purpose is hereby granted.
+
+-------------
+Contributors:
+
+	Karel Zak <zakkr@zff.jcu.cz> ftp://ftp2.zf.jcu.cz/users/zakkr/pg/
+		did the error checking for 7.4
+
+	Fabien
+		created the Makefile
+

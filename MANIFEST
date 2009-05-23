@@ -1,0 +1,7 @@
+Changes
+INSTALL
+MANIFEST
+Makefile
+nls_string.c
+nls_string.sql.in
+README.nls_string
