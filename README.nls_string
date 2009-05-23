@@ -135,3 +135,6 @@ Contributors:
 	Fabien
 		created the Makefile
 
+        Daniel Podlejski
+                port to postgresql-8.3
+
